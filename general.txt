@@ -1,0 +1,162 @@
+connectDB
+1. The reason we start the server after mongodb connection is
+to avoid errors incase the DB isn't ready. 
+If you don’t use this structure and just run app.listen() without
+DB connection, your server may start, but your routes that rely on the database will break.
+
+
+
+Types of authentication:
+1. Password-based authentication: Done
+Just the basic one, like using email, password. Backend verifies grant access. Just using bcrypt. 
+
+2. Token-based authentication(JWT):Done 
+Instead of using sessions or cookies, we use a token(JWT token) to verify and authorize the user on each request. 
+The token is stored on the client side like in locatstorage, cookies and sent with each request via authorization headers. 
+
+complete workflow:
+i. user sends login request 
+ii. backend validate credentials 
+iii. if credentials are valid, generate a JWT token using code like 
+     const token = jwt. sign(
+        {id: user_id, email: user.email},//payload
+        process.env.JWT_SECRET,//secret key
+        {expiresIn: "1h"}//token expirey
+     )
+
+This token is base64-encoded string with 3 parts. 
+HEADER.PAYLOAD.SIGNATURE 
+
+payload -- user info(except password)
+the signature -- ensures the token was'nt tampered.
+
+iv. send token to the client
+return the token in the response like 
+res.status(200).json({token});
+the client will store this in local storage for SPA
+or HttpOnly cookies -- for better security 
+
+v. Client sends token on future requests 
+client add this token to the authorization header like 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+every protected API call will now send this header.
+
+vi. You will create a verifytoken middleware like 
+vii. TOken expiry and re-login 
+
+refresh token + access token:
+1. User logs in server creates 2 tokens 
+2. send both tokens to the client 
+3. on each request client sends accessToken in authorization header. 
+   server verifies token --> user gets data 
+
+4. if access token expired, frontend sends refresh token to /refresh-token endpoint. 
+Backend verifies refresh token and sends back a new access token. 
+
+5. user stays logged in automatically. 
+
+token rotation: 
+refresh token gets renewed every time is is used. 
+
+
+
+session vs cookies vs localStorage:
+session: server-side memory for a logged-in user.
+for example:
+when you login to a site using express-session, the server stores your user info 
+in a session, and gives you a session ID usually inside a cookie. 
+your server now remembers who you are without needing a JWT> 
+
+cookies: 
+small files stored in the browser, sent with every request to the server. 
+They are sent automatically with every HTTP request to teh backend.
+You can mark them as 
+HttpOnly -- server-only, can't be accessed by js 
+Secure -- only sent on HTTPs
+samesite -- control cross-site behaviour. 
+
+used to store session id. 
+JWT refresh tokens 
+theme/preferences etc. 
+cookie size ~ 4 kb 
+
+localStorage: 
+key-value storage built into the browser, accessible by Javascript 
+used when you want to persist data between refreshes 
+for things like:
+--> Jwt access token 
+--> app theme 
+--> cart data 
+
+
+3. Session-based auth:
+Server stores used login info in memory (or DB) after login and gives the user 
+a session ID in a cookie. 
+The browser sends this cookie with every request, and the server checks:
+"Does this session ID exist? is it valid?
+if yes --> you are authorized 
+
+working:
+1. user logs in 
+2. backend validate credentials 
+   if valid server creates a session. 
+   req.session.user = {
+    id: user._id, 
+    email: user.email, 
+    role: user.role
+   }
+
+3. Server stores session internally 
+   express-session creates a unique session-ID. It stores user info on the server. 
+   In memory for dev 
+   in redis/db for production 
+
+4. servers sends session ID in a cookie. 
+5. Future requests send the cookie automatically. 
+
+
+4.OAuth: Third party
+Open authorization -- lets your app access user data from another service without 
+asking for their password. 
+it is like saying: 
+
+"Hey Google, can you tell me who this user is -- and if they allow it, 
+send me some info about them?
+
+working:
+1. User clicks "login with google":
+   Your frontend redirects the user to Google's Oauth consent screen. 
+   They(Google) see a popup
+   "This app wants to access your email and profile info. Allow?"
+
+2. User clicks allow: 
+Google redirects the user back to your app 
+with a special authorization code: 
+https://yourapp.com/auth/callback?code=Auth_code_here 
+
+You have now a temporary authorization code. This code does not contain user info yet. 
+It is just a key to request the real tokens. 
+
+
+3. Your backend sends this code to google. 
+   In return Google gives you: 
+   access_token: used to access Google API 
+   id_token -- contain user info 
+   expires_in -- how long token is valid
+
+4. Your backend decodes the token  
+
+
+
+
+
+
+5. OTP-based auth:
+enter email etc. --> recieve a OTP -> enter to verify. 
+
+6. Biometric authentication:
+using faceID, fingerprint, retina scan. 
+
+7. Magic link 
+enter email --> recieve login link --> click to auto-login 

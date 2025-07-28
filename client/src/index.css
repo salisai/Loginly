@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+
+
+@theme inline {
+  /* colors to use*/
+  --color-primary: #ffffff ;
+  --color-secondary: #00b4d8;
+  --color-background: #eff6ff;
+  --color-surface: #ffffff;
+
+  /* font sizes */
+  --text-heading: #111827;
+  --text-body: #485563;
+
+  /* fonts */
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+}
+
