@@ -141,7 +141,8 @@ It is just a key to request the real tokens.
 
 3. Your backend sends this code to google. 
    In return Google gives you: 
-   access_token: used to access Google API 
+   access_token: used to access Google API git remote add origin https://github.com/Sas3380/Loginly.git
+   
    id_token -- contain user info 
    expires_in -- how long token is valid
 

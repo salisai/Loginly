@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  
   return (
     
-    <nav className="p-4 shadow-md bg-transparent">
+    <nav className="p-4 bg-transparent">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold">AuthApp</Link>
         <div className="space-x-4">
