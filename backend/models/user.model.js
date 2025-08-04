@@ -32,15 +32,18 @@ const userSchema = new Schema(
 
 //hash before saving 
 userSchema.pre("save", async function(next){
-    if(!this.isModified("password")) return next;
+    if(!this.isModified("password")) return next();
 
     this.password = await bcrypt.hash(this.password, 10);
     return next()
 });
 
 //inject method into the schema
-userSchema.methods.isPasswordCorrect = async function(){
-    return await bcrypt.compare(password, this.password)
+userSchema.methods.isPasswordCorrect = async function(password){
+    // console.log("ENtered password", password);
+    // console.log("Hashed one pass", this.password)
+    
+    return await bcrypt.compare(password, this.password);
 }
 
 

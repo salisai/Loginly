@@ -1,11 +1,9 @@
 import bcrypt from "bcrypt";
-import User from "../models/user.model.js"
+import {User} from "../models/user.model.js"
 import jwt from "jsonwebtoken";
-import { asyndHandler } from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js"
-
-
 
 const createTokens = async(userId) => {
     try {
@@ -24,7 +22,7 @@ const createTokens = async(userId) => {
 }
 
 //signup controller
-export const signup = asyndHandler(async(req, res) => {
+export const signup = asyncHandler(async(req, res) => {
 
     const {username, email, password} = req.body;
     
@@ -37,13 +35,14 @@ export const signup = asyndHandler(async(req, res) => {
     if (existingUser) {
         throw new ApiError(409, "User with email or username already exists");
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
         username, 
         email, 
-        password: hashedPassword
+        password,
     });
+
+    await newUser.save();
     
     const createdUser = await User.findById(newUser._id).select(
         "-password -refreshToken"
@@ -61,21 +60,23 @@ export const signup = asyndHandler(async(req, res) => {
 
 
 //login controller
-export const login = asyndHandler(async(req, res) => {
+export const login = asyncHandler(async(req, res) => {
 
     const {email, password} = req.body;
 
-    if(!(username || email)){
+    if((!email || !password)){
         throw new ApiError(400, "Username or password required")
     }
 
-    const user = await User.findOne({
-        $or: [{email}, {username}]
-    });
+    const user = await User.findOne({email});
     
     if(!user) throw new ApiError(404, "User does not exists")
+    // console.log("Raw password", password);
+    // console.log("Hashed", user.password)
 
     const isPasswordValid = await user.isPasswordCorrect(password);
+    // console.log("Password valid:", isPasswordValid);
+
     if (!isPasswordValid) throw new ApiError(401, "Invalid credentials")
 
     const {accessToken, refreshToken} = await createTokens(user._id);
@@ -105,7 +106,7 @@ export const login = asyndHandler(async(req, res) => {
 
 
 //logout controller
-export const logout = asyndHandler(async(req, res) => {
+export const logout = asyncHandler(async(req, res) => {
     const userId = req.user?._id;
 
     if(!userId){
@@ -139,7 +140,7 @@ export const logout = asyndHandler(async(req, res) => {
 
 
 //refresh token rotation
-export const refreshAccessToken = asyndHandler(async(req, res) => {
+export const refreshAccessToken = asyncHandler(async(req, res) => {
     const oldToken = req.cookies.refreshToken;
 
     if(!oldToken) throw new ApiError(401, "Missing refresh token");
@@ -173,7 +174,7 @@ export const refreshAccessToken = asyndHandler(async(req, res) => {
 
 
 
-const changeCurrentPassword = asyndHandler(async(req, res)=>{
+const changeCurrentPassword = asyncHandler(async(req, res)=>{
     const user = await User.findById(req.user?._id);
 
     const {oldPassword, newPassword} = req.body;

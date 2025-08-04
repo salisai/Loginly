@@ -1,5 +1,5 @@
 //handle errors, to avoid repitition
-const asyndHandler = (requestHandler) => {
+const asyncHandler = (requestHandler) => {
     if (typeof requestHandler !== "function"){
         throw new Error("asyncHandler expects a function");
     }
@@ -10,4 +10,4 @@ const asyndHandler = (requestHandler) => {
     }
 }
 
-export {asyndHandler};
+export {asyncHandler};
