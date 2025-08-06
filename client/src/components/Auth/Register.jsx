@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { FcGoogle } from 'react-icons/fc';
+import { FaGithub } from 'react-icons/fa';
 
 const Register = () => {
-  const {signup} = useAuth()
-
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -13,8 +14,8 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData(prev => ({
-      ...prev, 
-      [e.target.name] : e.target.value
+      ...prev,
+      [e.target.name]: e.target.value
     }));
   };
 
@@ -23,30 +24,28 @@ const Register = () => {
     signup(formData);
   };
 
-
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Register</h2>
-     
+    <div className="max-w-4xl mx-auto bg-white px-10 py-8 rounded-lg shadow-sm border border-gray-100 mt-12 mb-12">
+      <h2 className="text-2xl font-semibold text-center mb-6 text-gray-900">Register</h2>
+
       <form onSubmit={handleSubmit} className="space-y-4">
-       
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
             Name
           </label>
           <input
             type="text"
             id="username"
             name="username"
-            value={formData.name}
+            value={formData.username}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
             Email
           </label>
           <input
@@ -55,13 +54,13 @@ const Register = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
             Password
           </label>
           <input
@@ -70,28 +69,55 @@ const Register = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
             required
           />
         </div>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Register
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 bg-[#101828] rounded-md text-sm font-medium text-white"
+        >
+          Register
+        </button>
       </form>
 
       <div className="mt-4 text-center">
         <p className="text-sm text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:text-blue-800">
+          <Link to="/login" className="text-sm text-black hover:underline">
             Login here
           </Link>
         </p>
+      </div>
+
+      <div className="mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="px-2 bg-white text-gray-500">Or register with</span>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          >
+            <FcGoogle className="h-4 w-4" />
+            <span className="ml-2">Google</span>
+          </button>
+
+          <button
+            type="button"
+            className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          >
+            <FaGithub className="h-4 w-4" />
+            <span className="ml-2">GitHub</span>
+          </button>
+        </div>
       </div>
     </div>
   );

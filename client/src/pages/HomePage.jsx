@@ -4,27 +4,41 @@ import Footer from '../components/Layout/Footer';
 
 const HomePage = () => {
   return (
-    <div className="bg-background min-h-screen flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        <div className="container mx-auto py-12 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Features</h2>
+       
+        {/* Features Section */}
+        <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 ">
+          <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Features</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-3 text-blue-700">Secure Authentication</h3>
-              <p className="text-gray-600">Industry-standard security practices to keep your data safe.</p>
+            {/* Card 1 */}
+            <div className="bg-white p-8 rounded-lg shadow-xs border border-gray-100 hover:shadow-sm transition-all duration-300 hover:border-gray-200">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900">Secure Authentication</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Industry-standard security with end-to-end encryption, using JWT
+              </p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-3 text-blue-700">Easy to Use</h3>
-              <p className="text-gray-600">Simple and intuitive interface for all users.</p>
+
+            {/* Card 2 */}
+            <div className="bg-white p-8 rounded-lg shadow-xs border border-gray-100 hover:shadow-sm transition-all duration-300 hover:border-gray-200">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900">Easy to Use</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Intuitive interface for seamless navigation.
+              </p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-3 text-blue-700">Fast Performance</h3>
-              <p className="text-gray-600">Optimized for quick loading and smooth experience.</p>
+
+            {/* Card 3 */}
+            <div className="bg-white p-8 rounded-lg shadow-xs border border-gray-100 hover:shadow-sm transition-all duration-300 hover:border-gray-200">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900">Fast Performance</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Optimized for instant responses.
+              </p>
             </div>
           </div>
         </div>
+
       </main>
       <Footer />
     </div>

@@ -1,17 +1,28 @@
+import { Link } from "react-router-dom";
+
 const Hero = () => {
   return (
-    <section className="py-20 bg-blue-50">
-      <div className="max-w-4xl mx-auto px-4 text-center">
-        <h1 className="text-3xl md:text-5xl font-bold mb-4">
-          Welcome to <br /> AuthApp
+    <section className="min-h-[85vh] bg-white flex items-center justify-center py-12">
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          Welcome to <span className="block mt-2">AuthApp</span>
         </h1>
-        <p className="text-md md:text-xl text-gray-600">
-          A secure authentication system built with the MERN stack. Manage your account and enjoy our services.
+        <p className="text-[16px] md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
+          A secure authentication system built with the MERN stack.
+          Manage your account and enjoy our services.
         </p>
+
+
+        <Link
+          to="/login"
+          className="inline-block px-18 py-3 border-1 border-black rounded-md font-medium bg-[#101828] text-white"
+        >
+          Join
+        </Link>
+
       </div>
     </section>
   );
 };
-
 
 export default Hero;
