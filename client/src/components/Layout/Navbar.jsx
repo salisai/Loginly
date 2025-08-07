@@ -1,10 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import "../../assets/menu_icon.png"
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+
+  const {logout} = useAuth();
+  const navigate = useNavigate()
 
   useEffect(()=>{
     const checkMobileView = () => {
@@ -85,7 +89,7 @@ const Navbar = () => {
         <div className={`
           md:hidden bg-white overflow-hidden
           transition-all duration-300 ease-in-out
-          ${isMobileMenuOpen ? 'max-h-48 opacity-100 py-4 border-t border-gray-100' : 'max-h-0 opacity-0 py-0 border-t-0'}
+          ${isMobileMenuOpen ? 'max-h-60 opacity-100 py-4 border-t border-gray-100' : 'max-h-0 opacity-0 py-0 border-t-0'}
         `}>
           <div className="px-4 space-y-3">
             <Link 
@@ -102,6 +106,26 @@ const Navbar = () => {
             >
               Register
             </Link>
+
+            <Link 
+              to="/change-password" 
+              className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
+              onClick={toggleMobileMenu}
+            >
+              Change password
+            </Link>
+
+            {/* logout button */}
+            <button
+              onClick={() => {
+                logout(); // call the logout function from your context
+                toggleMobileMenu(); // close the menu if needed
+                navigate('/login')
+              }}
+              className="block w-full px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
+            >
+              Logout
+            </button>
           </div>
         </div>
       )}

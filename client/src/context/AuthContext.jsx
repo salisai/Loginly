@@ -53,6 +53,23 @@ export const AuthProvider =({children}) => {
     };
 
 
+    //changepassword 
+    const changePassword = async({currentPassword, newPassword}) => {
+        try {
+            setLoading(true)
+            const response = await axios.post("http://localhost:8000/api/auth/change-password", 
+                {currentPassword, newPassword}, 
+                {withCredentials: true}
+            );
+        } catch (error) {
+            console.log("Password change failed", error.response?.data || error.message)
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+
     //logout 
     const logout = async () => {
         try{
@@ -63,7 +80,7 @@ export const AuthProvider =({children}) => {
             setUser(null);
             setIsAuthenticated(false);
             navigate("/login")
-        }catch{
+        }catch(error){
             console.log("Logout failed: ", error.response?.data || error.message);
         }
     };
@@ -76,7 +93,8 @@ export const AuthProvider =({children}) => {
                 loading,
                 signup,
                 login,
-                logout
+                logout,
+                changePassword
             }}
         >
             {children}
