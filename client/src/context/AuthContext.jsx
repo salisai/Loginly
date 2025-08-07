@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-//create context 
 const AuthContext = createContext();
 //used to wrap your app and pass data down component tree without prop drilling. 
 
