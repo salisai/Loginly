@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -67,6 +67,7 @@ export const AuthProvider =({children}) => {
         }
     }
 
+    
 
 
     //logout 
@@ -83,6 +84,21 @@ export const AuthProvider =({children}) => {
             console.log("Logout failed: ", error.response?.data || error.message);
         }
     };
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/api/auth/me", {withCredentials: true});
+                setUser(response.data.user);
+                setIsAuthenticated(true);
+            } catch (error) {
+                setUser(null);
+                setIsAuthenticated(false);
+            }
+        };
+
+        checkAuth();
+    },[])
 
     return (
         <AuthContext.Provider

@@ -5,10 +5,10 @@ import bodyParser from 'body-parser';
 import cors from 'cors'
 import authRoutes from "./routes/auth.routes.js"
 import oauthRoutes from "./routes/oauth.routes.js"
-
+import cookieParser from "cookie-parser";
 import passport from "passport";
-import { session } from "express-session";
 import "./config/passport.js"
+import {verifyToken} from "./middleware/auth.middleware.js"
 
 dotenv.config({
     path: "./.env"
@@ -16,31 +16,20 @@ dotenv.config({
 
 const app = express();
 
+app.use(cookieParser());
 //cors middleware
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
 }));
 
+app.use(passport.initialize());
 //body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-app.use(session({
-    secret: process.env.SESSION_SECRET ||  "default_session_secret", 
-    resave: false, 
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true, 
-        secure: false, //in prod set true
-        sameSite: "Lax"
-    }
-}));
 
-//passport setup
-app.use(passport.initialize());
-app.use(passport.session());
 //routing
 app.use('/api/auth', authRoutes)
 app.use("/api/auth", oauthRoutes);
@@ -48,6 +37,10 @@ app.use("/api/auth", oauthRoutes);
 //default route
 app.get("/", (req, res) => {
     res.send("Server is running")
+})
+
+app.get("/api/auth/me",verifyToken, (req, res) => {
+    res.json({user: req.user});
 })
 
 

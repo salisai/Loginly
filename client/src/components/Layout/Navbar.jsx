@@ -7,7 +7,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
 
-  const {logout} = useAuth();
+  const {isAuthenticated, user, logout} = useAuth();
   const navigate = useNavigate()
 
   useEffect(()=>{
@@ -53,19 +53,31 @@ const Navbar = () => {
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-4">
-          <Link 
-            to="/login" 
-            className="px-6 py-2 border border-black rounded-md font-medium text-black hover:bg-black hover:text-white transition-colors duration-200"
-          >
-            Login
-          </Link>
-          <Link 
-            to="/register" 
-            className="px-6 py-2 border border-black rounded-md font-medium text-black hover:bg-black hover:text-white transition-colors duration-200"
-          >
-            Register
-          </Link>
+          {!isAuthenticated ?(
+            <>
+              <Link 
+                to="/login" 
+                className="px-6 py-2 border border-black rounded-md font-medium text-black hover:bg-black hover:text-white transition-colors duration-200"
+              >
+                Login
+              </Link>
+              <Link 
+                to="/register" 
+                className="px-6 py-2 border border-black rounded-md font-medium text-black hover:bg-black hover:text-white transition-colors duration-200"
+              >
+                Register
+              </Link>
+            </>
+
+          ):(
+            <>
+              <Link to="/change-password" className="px-6 py-2 border border-black rounded-md">Change Password</Link>
+              <button onClick={logout} className="px-6 py-2 border border-black rounded-md">Logout</button>
+            </>
+          )}
         </div>
+
+
 
         {/* Mobile Menu Button */}
         <button 
@@ -92,40 +104,49 @@ const Navbar = () => {
           ${isMobileMenuOpen ? 'max-h-60 opacity-100 py-4 border-t border-gray-100' : 'max-h-0 opacity-0 py-0 border-t-0'}
         `}>
           <div className="px-4 space-y-3">
-            <Link 
-              to="/login" 
-              className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
-              onClick={toggleMobileMenu}
-            >
-              Login
-            </Link>
-            <Link 
-              to="/register" 
-              className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
-              onClick={toggleMobileMenu}
-            >
-              Register
-            </Link>
+            {!isAuthenticated ? (
+              <>
+                <Link 
+                  to="/login" 
+                  className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
+                  onClick={toggleMobileMenu}
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
+                  onClick={toggleMobileMenu}
+                >
+                  Register
+                </Link>
+              </>
+              
+            ): (
+              <>
+                <Link 
+                  to="/change-password" 
+                  className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
+                  onClick={toggleMobileMenu}
+                >
+                  Change password
+                </Link>
 
-            <Link 
-              to="/change-password" 
-              className="block px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
-              onClick={toggleMobileMenu}
-            >
-              Change password
-            </Link>
+                {/* logout button */}
+                <button
+                  onClick={() => {
+                    logout(); // call the logout function from your context
+                    toggleMobileMenu(); // close the menu if needed
+                    navigate('/login')
+                  }}
+                  className="block w-full px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </>
+            )}
 
-            {/* logout button */}
-            <button
-              onClick={() => {
-                logout(); // call the logout function from your context
-                toggleMobileMenu(); // close the menu if needed
-                navigate('/login')
-              }}
-              className="block w-full px-4 py-2 text-center rounded-md font-medium text-black hover:bg-[#101828] hover:text-white transition-colors duration-200"
-            >
-              Logout
-            </button>
+            
           </div>
         </div>
       )}

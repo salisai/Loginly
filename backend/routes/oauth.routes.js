@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { oauthCallbackHandler } from "../controllers/oauth.controller";
+import { oauthCallbackHandler } from "../controllers/oauth.controller.js";
 
 
 const router = express.Router();

@@ -3,9 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 const Register = () => {
   const { signup } = useAuth();
+  const [showPass, setShowPass] = useState(false)
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -59,19 +62,28 @@ const Register = () => {
           />
         </div>
 
+        {/* PASSWORD WITH SHOW/HIDE */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
-            required
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+
+          <div className="relative">
+            <input
+              type={showPass ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
+              required
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPass(!showPass)}
+              className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700 text-xl"
+            >
+              {showPass ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </button>
+          </div>
         </div>
 
         <button
@@ -105,6 +117,7 @@ const Register = () => {
           <button
             type="button"
             className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+            onClick={() => window.location.href = "http://localhost:8000/api/auth/google"}
           >
             <FcGoogle className="h-4 w-4" />
             <span className="ml-2">Google</span>
@@ -113,6 +126,7 @@ const Register = () => {
           <button
             type="button"
             className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+            onClick={() => window.location.href = "http://localhost:8000/api/auth/github"}
           >
             <FaGithub className="h-4 w-4" />
             <span className="ml-2">GitHub</span>

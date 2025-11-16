@@ -1,5 +1,5 @@
-import { User } from "../models/user.model";
-import { ApiResponse } from "../utils/ApiResponse";
+import { User } from "../models/user.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
 
@@ -15,7 +15,6 @@ export const oauthCallbackHandler = async(req, res) => {
         {
             _id: user._id,
             email: user.email, 
-            username: user.username
         },
         process.env.ACCESS_TOKEN_SECRET,
         {expiresIn: process.env.ACCESS_TOKEN_EXPIRY}
@@ -33,14 +32,14 @@ export const oauthCallbackHandler = async(req, res) => {
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true, 
-        secure: true, 
-        sameSite: "Strict",
+        // secure: true, //for prod
+        sameSite: "Lax",
     });
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true, 
-        secure: true, 
-        sameSite: "Strict"
+        // secure: true, //true for production
+        sameSite: "Lax"
     });
 
 
