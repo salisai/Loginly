@@ -15,12 +15,28 @@ passport.use(
         async(accessToken, refreshToken, profile, done) => {
             try {
                 const email = profile.emails?.[0]?.value;
+                if(!email){
+                    return done(new Error("Email not provided by Google"), false);
+                }
+
                 const existingUser = await User.findOne({email});
 
                 //if user exists return otherwise create new user.
                 if(existingUser) return done(null, existingUser);
+                
+                // Generate unique username
+                let username = profile.displayName?.toLowerCase().replace(/\s+/g, "") || email.split("@")[0];
+                let baseUsername = username;
+                let counter = 1;
+                
+                // Ensure username is unique
+                while(await User.findOne({username})){
+                    username = `${baseUsername}${counter}`;
+                    counter++;
+                }
+
                 const newUser = await User.create({
-                    username: profile.displayName.toLowerCase().replace(/\s+/g, ""),
+                    username,
                     email, 
                     password: "oauth"
                 })
@@ -49,8 +65,19 @@ passport.use(
 
                 if (existingUser) return done(null, existingUser);
 
+                // Generate unique username
+                let username = profile.username || email.split("@")[0];
+                let baseUsername = username;
+                let counter = 1;
+                
+                // Ensure username is unique
+                while(await User.findOne({username})){
+                    username = `${baseUsername}${counter}`;
+                    counter++;
+                }
+
                 const newUser = await User.create({
-                    username: profile.username, 
+                    username,
                     email, 
                     password: "oauth"
                 });
@@ -63,5 +90,20 @@ passport.use(
         }
     )
 );
+
+// Serialize user for session
+passport.serializeUser((user, done) => {
+    done(null, user._id);
+});
+
+// Deserialize user from session
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(error, null);
+    }
+});
 
 

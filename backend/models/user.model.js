@@ -32,6 +32,9 @@ const userSchema = new Schema(
 //hash before saving 
 userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next();
+    
+    // Skip hashing for OAuth users
+    if(this.password === "oauth") return next();
 
     this.password = await bcrypt.hash(this.password, 10);
     return next()

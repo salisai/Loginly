@@ -30,18 +30,27 @@ export const oauthCallbackHandler = async(req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true, 
-        // secure: true, //for prod
-        sameSite: "Lax",
-    });
+    const isProduction = process.env.NODE_ENV === "production";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
-    res.cookie("refreshToken", refreshToken, {
-        httpOnly: true, 
-        // secure: true, //true for production
-        sameSite: "Lax"
-    });
+    const accessTokenOptions = {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60, // 1 hour
+        path: "/" 
+    };
 
+    const refreshTokenOptions = {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        path: "/" 
+    };
 
-    return res.redirect("/")
+    res.cookie("accessToken", accessToken, accessTokenOptions);
+    res.cookie("refreshToken", refreshToken, refreshTokenOptions);
+
+    return res.redirect(`${frontendUrl}/?oauth=success`)
 }

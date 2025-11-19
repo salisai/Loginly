@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import "./config/passport.js"
 import {verifyToken} from "./middleware/auth.middleware.js"
+import { errorHandler } from "./middleware/errorHandler.middleware.js";
+import { authRateLimiter } from "./middleware/rateLimiter.middleware.js";
 
 dotenv.config({
     path: "./.env"
@@ -17,38 +19,63 @@ dotenv.config({
 const app = express();
 
 app.use(cookieParser());
-//cors middleware
+
+// CORS middleware
+const allowedOrigins = process.env.FRONTEND_URL 
+    ? process.env.FRONTEND_URL.split(',')
+    : ["http://localhost:5173"];
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true
 }));
 
 app.use(passport.initialize());
-//body parser middleware
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Rate limiting for auth routes
+app.use('/api/auth', authRateLimiter);
 
-
-//routing
+// Routing
 app.use('/api/auth', authRoutes)
 app.use("/api/auth", oauthRoutes);
 
-//default route
+// Default route
 app.get("/", (req, res) => {
-    res.send("Server is running")
+    res.json({ message: "Server is running", status: "ok" });
 })
 
-app.get("/api/auth/me",verifyToken, (req, res) => {
+app.get("/api/auth/me", verifyToken, (req, res) => {
     res.json({user: req.user});
 })
 
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
-//db connection 
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
+});
+
+// DB connection 
 connectDB().then(()=> {
-    app.listen(process.env.PORT || 8000, ()=>{
-        console.log(`server is running at port ${process.env.PORT || 8000}`)
+    app.listen(process.env.PORT || 8000, ()=>{ 
+        console.log(`✅ Server is running at port ${process.env.PORT || 8000}`)
+        console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`)
     })
 }).catch((error)=> {
-    console.log("Mongodb connection failed ", error)
+    console.error("❌ MongoDB connection failed: ", error.message)
+    process.exit(1);
 })

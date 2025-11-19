@@ -6,8 +6,9 @@ import { FaGithub } from 'react-icons/fa';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 const Register = () => {
-  const { signup } = useAuth();
-  const [showPass, setShowPass] = useState(false)
+  const { signup, loading } = useAuth();
+  const [showPass, setShowPass] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     username: '',
@@ -15,16 +16,57 @@ const Register = () => {
     password: '',
   });
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.username) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    }
+    
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+    
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
+    // Clear error when user starts typing
+    if(errors[e.target.name]) {
+      setErrors(prev => ({
+        ...prev,
+        [e.target.name]: ""
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    signup(formData);
+    
+    if(!validateForm()) {
+      return;
+    }
+    
+    try {
+      await signup(formData);
+    } catch (error) {
+      // Error handled in context
+    }
   };
 
   return (
@@ -42,9 +84,11 @@ const Register = () => {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
-            required
+            className={`block w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black ${
+              errors.username ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
         </div>
 
         <div>
@@ -57,9 +101,11 @@ const Register = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
-            required
+            className={`block w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black ${
+              errors.email ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
         </div>
 
         {/* PASSWORD WITH SHOW/HIDE */}
@@ -72,9 +118,11 @@ const Register = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
-              required
+              className={`block w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
 
             <button
               type="button"
@@ -88,9 +136,12 @@ const Register = () => {
 
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 bg-[#101828] rounded-md text-sm font-medium text-white"
+          disabled={loading}
+          className={`w-full flex justify-center py-2 px-4 bg-[#101828] rounded-md text-sm font-medium text-white transition-opacity ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1a2332]"
+          }`}
         >
-          Register
+          {loading ? "Creating account..." : "Register"}
         </button>
       </form>
 
@@ -116,8 +167,8 @@ const Register = () => {
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button
             type="button"
-            className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-            onClick={() => window.location.href = "http://localhost:8000/api/auth/google"}
+            className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
+            onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/google`}
           >
             <FcGoogle className="h-4 w-4" />
             <span className="ml-2">Google</span>
@@ -125,8 +176,8 @@ const Register = () => {
 
           <button
             type="button"
-            className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-            onClick={() => window.location.href = "http://localhost:8000/api/auth/github"}
+            className="w-full flex items-center justify-center py-2 px-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
+            onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/github`}
           >
             <FaGithub className="h-4 w-4" />
             <span className="ml-2">GitHub</span>

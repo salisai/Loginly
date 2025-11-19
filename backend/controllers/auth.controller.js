@@ -10,7 +10,7 @@ const createTokens = async(userId) => {
         const user = await User.findById(userId);
 
         const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
 
         user.refreshToken = refreshToken;
         await user.save({validateBeforeSave: false});
@@ -26,9 +26,19 @@ export const signup = asyncHandler(async(req, res) => {
 
     const {username, email, password} = req.body;
     
-    // Basic validation
     if (!username || !email || !password) {
         throw new ApiError(400, "All fields are required");
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new ApiError(400, "Invalid email format");
+    }
+
+    // Password validation
+    if (password.length < 6) {
+        throw new ApiError(400, "Password must be at least 6 characters long");
     }
 
     const existingUser = await User.findOne({$or:[{username}, {email}]});
@@ -53,7 +63,7 @@ export const signup = asyncHandler(async(req, res) => {
     }
 
     return res.status(201).json(
-        new ApiResponse(200, createdUser, "User registered successfully")
+        new ApiResponse(201, createdUser, "User registered successfully")
     )
 });
 
@@ -71,8 +81,6 @@ export const login = asyncHandler(async(req, res) => {
     const user = await User.findOne({email});
     
     if(!user) throw new ApiError(404, "User does not exists")
-    // console.log("Raw password", password);
-    // console.log("Hashed", user.password)
 
     const isPasswordValid = await user.isPasswordCorrect(password);
     // console.log("Password valid:", isPasswordValid);
@@ -83,9 +91,22 @@ export const login = asyncHandler(async(req, res) => {
     
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
     
+    const isProduction = process.env.NODE_ENV === "production";
+    
     const options = {
         httpOnly: true,
-        secure: true
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        path: "/" 
+    }
+
+    const accessTokenOptions = {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60, // 1 hour
+        path: "/" // Ensure cookie is available for all routes
     }
     
     user.refreshToken = refreshToken;
@@ -93,11 +114,11 @@ export const login = asyncHandler(async(req, res) => {
 
     return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
+    .cookie("accessToken", accessToken, accessTokenOptions)
     .cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200, {
-            user: loggedInUser, accessToken, refreshToken
+            user: loggedInUser
         },
     "User logged in successfully"
     ))
@@ -113,7 +134,7 @@ export const logout = asyncHandler(async(req, res) => {
         throw new ApiError(401, "Unauthorized request");
     }
 
-    User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
         userId,
         {
             $unset: {refreshToken: 1}
@@ -123,9 +144,12 @@ export const logout = asyncHandler(async(req, res) => {
         }
     );
 
+    const isProduction = process.env.NODE_ENV === "production";
     const CookieOptions = {
         httpOnly: true,
-        secure: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/" // Must match the path used when setting cookies
     }
 
     res.clearCookie("accessToken", CookieOptions);
@@ -157,36 +181,64 @@ export const refreshAccessToken = asyncHandler(async(req, res) => {
         throw new ApiError(403, "Token mismatch or user not found");
     } 
 
-    const {accessToken, refreshToken} = createTokens(user);
+    const {accessToken, refreshToken} = await createTokens(user._id);
     user.refreshToken = refreshToken;
     await user.save();
 
-
-    res.cookie("refreshToken", refreshToken, {
+    const isProduction = process.env.NODE_ENV === "production";
+    
+    const refreshTokenOptions = {
         httpOnly: true,
-        secure: true, 
-        sameSite: "Strict",
+        secure: isProduction, 
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+        path: "/" 
+    }
+
+    const accessTokenOptions = {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60, // 1 hour
+        path: "/" 
+    }
+
+    res.cookie("refreshToken", refreshToken, refreshTokenOptions);
+    res.cookie("accessToken", accessToken, accessTokenOptions);
 
     res.status(200).json(new ApiResponse(200, {accessToken}, "Token refreshed successfully"))
 });
 
 
 
-const changeCurrentPassword = asyncHandler(async(req, res)=>{
+export const changeCurrentPassword = asyncHandler(async(req, res)=>{
     const user = await User.findById(req.user?._id);
+
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
 
     const {oldPassword, newPassword} = req.body;
 
-    const isPasswordCorrect = await user.isPasswordCorrect()
-    if(!isPasswordCorrect){
-        throw new ApiError(400, "Invalid password");
+    if(!oldPassword || !newPassword){
+        throw new ApiError(400, "Old password and new password are required");
+    }
+
+    // Validate new password length
+    if(newPassword.length < 6){
+        throw new ApiError(400, "New password must be at least 6 characters long");
+    }
+
+    // Skip password check for OAuth users
+    if(user.password && user.password !== "oauth"){
+        const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+        if(!isPasswordCorrect){
+            throw new ApiError(400, "Current password is incorrect");
+        }
     }
 
     user.password = newPassword;
-
-    await user.save({validateBeforeSave: false})
+    await user.save();
 
     return res
     .status(200)
