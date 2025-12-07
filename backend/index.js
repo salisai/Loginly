@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors'
 import authRoutes from "./routes/auth.routes.js"
 import oauthRoutes from "./routes/oauth.routes.js"
+import blogRoutes from "./routes/blog.routes.js"
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import "./config/passport.js"
@@ -46,8 +47,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/api/auth', authRateLimiter);
 
 // Routing
-app.use('/api/auth', authRoutes)
+app.use('/api/auth', authRoutes);
 app.use("/api/auth", oauthRoutes);
+app.use("/api/blog", blogRoutes);
 
 // Default route
 app.get("/", (req, res) => {

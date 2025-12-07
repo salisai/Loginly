@@ -40,5 +40,5 @@ export const rateLimiter = (windowMs = 15 * 60 * 1000, maxRequests = 100) => {
 };
 
 // Stricter rate limiter for auth routes
-export const authRateLimiter = rateLimiter(15 * 60 * 1000, 5); // 5 requests per 15 minutes
+export const authRateLimiter = rateLimiter(15 * 60 * 1000, 10); // 5 requests per 15 minutes
 
