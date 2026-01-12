@@ -3,18 +3,29 @@
 
 @theme inline {
   /* colors to use*/
-  --color-primary: #ffffff ;
+  --color-primary: #22c55e;
+  /* Green */
   --color-secondary: #00b4d8;
-  --color-background: #ffffff;
-  --color-surface: #ffffff;
+  --color-background: #000000;
+  /* Deep Black */
+  --color-surface: #111111;
+  --color-glass: rgba(255, 255, 255, 0.03);
 
   /* font sizes */
-  --text-heading: #111827;
-  --text-body: #485563;
+  --text-heading: #ffffff;
+  --text-body: #9ca3af;
+  /* Gray-400 */
 
   /* fonts */
-  --font-heading: "Poppins", sans-serif;
-  --font-body: "Inter", sans-serif;
-
+  --font-heading: "DM Sans", sans-serif;
+  --font-body: "DM Sans", sans-serif;
 }
 
+/* Global Styles */
+body {
+  background-color: var(--color-background);
+  color: var(--text-heading);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

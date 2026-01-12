@@ -1,12 +1,12 @@
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 p-6 mt-8">
-      <div className="container mx-auto text-center">
-        <p>© 2023 AuthApp. All rights reserved.</p>
-        <div className="flex justify-center gap-4 space-x-4 mt-2">
-          <a href="#" className="hover:text-blue-400">Terms</a>
-          <a href="#" className="hover:text-blue-400">Privacy</a>
-          <a href="#" className="hover:text-blue-400">Contact</a>
+    <footer className="border-t border-white/10 bg-black py-12">
+      <div className="container mx-auto px-4 text-center">
+        <p className="text-gray-500 text-sm mb-4">© 2023 Loginly. All rights reserved.</p>
+        <div className="flex justify-center gap-6 text-sm text-gray-600">
+          <a href="#" className="hover:text-green-500 transition-colors duration-200">Terms</a>
+          <a href="#" className="hover:text-green-500 transition-colors duration-200">Privacy</a>
+          <a href="#" className="hover:text-green-500 transition-colors duration-200">Contact</a>
         </div>
       </div>
     </footer>
