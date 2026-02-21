@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import "../../assets/menu_icon.png"
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
@@ -47,34 +46,33 @@ const Navbar = () => {
   }, [isMobileMenuOpen]);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-black/50 backdrop-blur-xl transition-all">
-      <div className="container mx-auto flex justify-between items-center h-16 px-4 md:px-6">
-        <Link to="/" className="text-2xl font-bold text-white tracking-tighter hover:text-green-400 transition-colors">Loginly</Link>
+    <nav className="sticky top-0 z-50 w-full border-b border-[var(--color-border)] bg-[var(--color-background)]/80 backdrop-blur-xl transition-all" role="navigation" aria-label="Main">
+      <div className="container-wide flex justify-between items-center h-[4.25rem]">
+        <Link to="/" className="text-xl font-bold text-white tracking-tight hover:text-[var(--color-primary-hover)] transition-colors">Loginly</Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-8">
           {!isAuthenticated ? (
             <>
               <Link
                 to="/login"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                className="text-caption font-medium text-[var(--text-body)] hover:text-white transition-colors"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="px-5 py-2 rounded-lg bg-gradient-to-r from-green-400 to-emerald-600 text-white text-sm font-medium transition-all shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)]"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white text-caption font-semibold transition-all shadow-[0_0_20px_rgba(34,197,94,0.25)] hover:shadow-[0_0_28px_rgba(34,197,94,0.4)] hover:-translate-y-0.5"
               >
                 Register
               </Link>
             </>
-
           ) : (
             <>
-              <Link to="/change-password" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Change Password</Link>
+              <Link to="/change-password" className="text-caption font-medium text-[var(--text-body)] hover:text-white transition-colors">Change Password</Link>
               <button
                 onClick={logout}
-                className="px-5 py-2 rounded-lg border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-all"
+                className="px-5 py-2.5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-border-strong)] bg-white/[0.04] hover:bg-white/[0.08] text-white text-caption font-medium transition-all"
               >
                 Logout
               </button>
@@ -82,12 +80,12 @@ const Navbar = () => {
           )}
         </div>
 
-
-
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-gray-300 hover:text-white focus:outline-none"
+          className="md:hidden p-2.5 text-[var(--text-body)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/50 rounded-lg"
           onClick={toggleMobileMenu}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,55 +101,53 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileView && (
-        <div className={`
-          md:hidden bg-black/95 border-b border-white/10 overflow-hidden
-          transition-all duration-300 ease-in-out
-          ${isMobileMenuOpen ? 'max-h-60 opacity-100 py-4' : 'max-h-0 opacity-0 py-0'}
-        `}>
-          <div className="px-4 space-y-3 flex flex-col items-center">
+        <div
+          id="mobile-menu"
+          className={`
+            md:hidden bg-[var(--color-surface)]/98 border-b border-[var(--color-border)] overflow-hidden
+            transition-all duration-300 ease-in-out
+            ${isMobileMenuOpen ? 'max-h-64 opacity-100 py-5' : 'max-h-0 opacity-0 py-0'}
+          `}
+        >
+          <div className="container-wide space-y-1 flex flex-col">
             {!isAuthenticated ? (
               <>
                 <Link
                   to="/login"
-                  className="block w-full text-center py-2 text-gray-300 hover:text-white font-medium"
+                  className="block w-full text-center py-3 text-[var(--text-body)] hover:text-white font-medium rounded-lg hover:bg-white/[0.04]"
                   onClick={toggleMobileMenu}
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="block w-full py-2 text-center rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium shadow-[0_4px_14px_0_rgba(34,197,94,0.39)]"
+                  className="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold shadow-[0_4px_14px_rgba(34,197,94,0.3)]"
                   onClick={toggleMobileMenu}
                 >
                   Register
                 </Link>
               </>
-
             ) : (
               <>
                 <Link
                   to="/change-password"
-                  className="block w-full text-center py-2 text-gray-300 hover:text-white font-medium"
+                  className="block w-full text-center py-3 text-[var(--text-body)] hover:text-white font-medium rounded-lg hover:bg-white/[0.04]"
                   onClick={toggleMobileMenu}
                 >
                   Change Password
                 </Link>
-
-                {/* logout button */}
                 <button
                   onClick={() => {
-                    logout(); // call the logout function from your context
-                    toggleMobileMenu(); // close the menu if needed
-                    navigate('/login')
+                    logout();
+                    toggleMobileMenu();
+                    navigate('/login');
                   }}
-                  className="block w-full py-2 text-center rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium"
+                  className="block w-full py-3 text-center rounded-xl border border-[var(--color-border)] bg-white/[0.04] hover:bg-white/[0.08] text-white font-medium"
                 >
                   Logout
                 </button>
               </>
             )}
-
-
           </div>
         </div>
       )}

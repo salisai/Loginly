@@ -1,17 +1,20 @@
 const Footer = () => {
   return (
-    <footer className="border-t border-white/10 bg-black py-12">
-      <div className="container mx-auto px-4 text-center">
-        <p className="text-gray-500 text-sm mb-4">© 2023 Loginly. All rights reserved.</p>
-        <div className="flex justify-center gap-6 text-sm text-gray-600">
-          <a href="#" className="hover:text-green-500 transition-colors duration-200">Terms</a>
-          <a href="#" className="hover:text-green-500 transition-colors duration-200">Privacy</a>
-          <a href="#" className="hover:text-green-500 transition-colors duration-200">Contact</a>
+    <footer className="border-t border-[var(--color-border)] bg-[var(--color-background)] section-spacing" role="contentinfo">
+      <div className="container-wide">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <p className="text-caption text-[var(--text-muted)] order-2 sm:order-1">
+            © {new Date().getFullYear()} Loginly. All rights reserved.
+          </p>
+          <nav className="flex items-center gap-8 order-1 sm:order-2" aria-label="Footer">
+            <a href="#" className="text-caption text-[var(--text-body)] hover:text-[var(--color-primary)] transition-colors">Terms</a>
+            <a href="#" className="text-caption text-[var(--text-body)] hover:text-[var(--color-primary)] transition-colors">Privacy</a>
+            <a href="#" className="text-caption text-[var(--text-body)] hover:text-[var(--color-primary)] transition-colors">Contact</a>
+          </nav>
         </div>
       </div>
     </footer>
   );
 };
-//101828
 
 export default Footer;

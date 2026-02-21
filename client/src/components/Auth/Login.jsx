@@ -63,18 +63,17 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-      {/* Background gradient blob */}
-      <div className="absolute top-0 -left-10 w-40 h-40 bg-green-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-0 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div className="w-full max-w-md mx-auto bg-white/[0.04] backdrop-blur-xl border border-[var(--color-border)] rounded-2xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
+      <div className="absolute top-0 -left-10 w-40 h-40 bg-green-500/15 rounded-full blur-[100px] pointer-events-none" aria-hidden="true" />
+      <div className="absolute bottom-0 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" aria-hidden="true" />
 
       <div className="relative z-10">
-        <h2 className="text-3xl font-bold text-center mb-2 text-white tracking-tight">Welcome Back</h2>
-        <p className="text-gray-400 text-center mb-8 text-sm">Please enter your details using the form below</p>
+        <h2 className="text-heading-1 text-center mb-2 text-white">Welcome Back</h2>
+        <p className="text-caption text-center mb-8 text-[var(--text-body)]">Please enter your details using the form below</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1.5 ml-1">
+            <label htmlFor="email" className="block text-caption font-medium text-[var(--text-body)] mb-2">
               Email Address
             </label>
             <input
@@ -84,84 +83,77 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="you@example.com"
-              className={`block w-full px-4 py-3 text-sm bg-black/20 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all duration-200 ${errors.email ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-white/10"
-                }`}
+              className={`block w-full px-4 py-3.5 text-body bg-black/20 border rounded-xl text-white placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/50 focus:border-[var(--color-primary)] transition-all duration-200 ${errors.email ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-[var(--color-border)]"}`}
             />
-            {errors.email && <p className="mt-1 text-xs text-red-400 font-medium ml-1">{errors.email}</p>}
+            {errors.email && <p className="mt-1.5 text-caption text-red-400 font-medium">{errors.email}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5 ml-1">Password</label>
+            <label htmlFor="password" className="block text-caption font-medium text-[var(--text-body)] mb-2">Password</label>
             <div className="relative">
               <input
                 type={showPass ? "text" : "password"}
+                id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className={`block w-full px-4 py-3 text-sm bg-black/20 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all duration-200 ${errors.password ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-white/10"
-                  }`}
+                className={`block w-full px-4 py-3.5 pr-12 text-body bg-black/20 border rounded-xl text-white placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/50 focus:border-[var(--color-primary)] transition-all duration-200 ${errors.password ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-[var(--color-border)]"}`}
               />
-              {errors.password && <p className="mt-1 text-xs text-red-400 font-medium ml-1">{errors.password}</p>}
-
+              {errors.password && <p className="mt-1.5 text-caption text-red-400 font-medium">{errors.password}</p>}
               <button
                 type="button"
                 onClick={() => setShowPass(!showPass)}
-                className="absolute right-3 top-3 text-gray-400 hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-body)] hover:text-white transition-colors p-1"
+                aria-label={showPass ? "Hide password" : "Show password"}
               >
                 {showPass ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
               </button>
             </div>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-1">
             <button
               type="submit"
               disabled={loading}
-              className={`w-full flex justify-center py-3 px-4 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-sm transition-all duration-200 shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_30px_rgba(22,163,74,0.5)] transform hover:-translate-y-0.5 ${loading ? "opacity-50 cursor-not-allowed transform-none shadow-none" : ""
-                }`}
+              className={`w-full flex justify-center py-3.5 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl text-body transition-all shadow-[0_0_20px_rgba(34,197,94,0.25)] hover:shadow-[0_0_28px_rgba(34,197,94,0.4)] hover:-translate-y-0.5 ${loading ? "opacity-50 cursor-not-allowed transform-none shadow-none" : ""}`}
             >
               {loading ? "Logging in..." : "Sign In"}
             </button>
           </div>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-400">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-green-400 hover:text-green-300 transition-colors">
-              Create account
-            </Link>
-          </p>
-        </div>
+        <p className="mt-6 text-center text-caption text-[var(--text-body)]">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors">
+            Create account
+          </Link>
+        </p>
 
-        {/* Socials */}
         <div className="mt-8">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
+              <div className="w-full border-t border-[var(--color-border)]" />
             </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-black text-gray-500 uppercase tracking-widest font-semibold text-[10px]">Or continue with</span>
+            <div className="relative flex justify-center">
+              <span className="px-3 bg-[var(--color-surface)] text-[var(--text-muted)] uppercase tracking-widest font-semibold text-caption">Or continue with</span>
             </div>
           </div>
-
           <div className="mt-6 grid grid-cols-2 gap-4">
             <button
               type="button"
-              className="w-full flex items-center justify-center py-2.5 px-4 border border-white/10 rounded-xl bg-white/5 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-green-500/50 transition-all duration-200"
+              className="w-full flex items-center justify-center py-3 px-4 border border-[var(--color-border)] rounded-xl bg-white/[0.04] text-caption font-medium text-[var(--text-body)] hover:bg-white/[0.08] hover:text-white hover:border-[var(--color-border-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/50 transition-all"
               onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/google`}
             >
-              <FcGoogle className="h-5 w-5 mr-2" />
+              <FcGoogle className="h-5 w-5 mr-2 shrink-0" />
               <span>Google</span>
             </button>
-
             <button
               type="button"
-              className="w-full flex items-center justify-center py-2.5 px-4 border border-white/10 rounded-xl bg-white/5 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-green-500/50 transition-all duration-200"
+              className="w-full flex items-center justify-center py-3 px-4 border border-[var(--color-border)] rounded-xl bg-white/[0.04] text-caption font-medium text-[var(--text-body)] hover:bg-white/[0.08] hover:text-white hover:border-[var(--color-border-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/50 transition-all"
               onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/github`}
             >
-              <FaGithub className="h-5 w-5 mr-2" />
+              <FaGithub className="h-5 w-5 mr-2 shrink-0" />
               <span>GitHub</span>
             </button>
           </div>
