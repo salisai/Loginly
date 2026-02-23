@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Layout/Navbar";
 import Footer from "../components/Layout/Footer";
+import { HiArrowNarrowRight } from "react-icons/hi";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -25,75 +26,52 @@ const Articles = () => {
           setError("Failed to load articles.");
         }
       } catch (err) {
-        // If unauthorized, ProtectedRoute should already redirect,
-        // but we still handle any unexpected errors here.
-        setError(
-          err.response?.data?.message ||
-          "Something went wrong while fetching articles."
-        );
+        setError(err.response?.data?.message || "Connection error.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchArticles();
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-background)] text-white">
-      <div className="page-backdrop" aria-hidden="true" />
-      <div className="page-content flex flex-col min-h-screen">
+    <div className="relative min-h-screen flex flex-col bg-[#050505] text-white selection:bg-emerald-500/30">
+      {/* Background Polish */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/[0.03] rounded-full blur-[120px]" />
+        <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      </div>
+
+      <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar />
 
-        <main className="flex-grow section-spacing-lg">
-          <div className="container-wide max-w-4xl">
-            <header className="mb-10 md:mb-12">
-              <h1 className="text-heading-1 text-white mb-3">
-                Latest Articles
+        <main className="flex-grow py-20 px-6">
+          <div className="max-w-4xl mx-auto w-full">
+            {/* Header Section */}
+            <header className="relative mb-16 md:mb-24">
+              <div className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Knowledge Base</span>
+              </div>
+              <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-white mb-6">
+                Latest <span className="text-emerald-500">Insights</span>
               </h1>
-              <p className="text-body-lg text-[var(--text-body)]">
-                Explore our collection of articles and updates.
+              <p className="text-lg text-slate-400 max-w-2xl font-medium leading-relaxed">
+                Technical deep dives, product updates, and engineering best practices from the Loginly team.
               </p>
             </header>
 
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-24">
-                <div className="inline-block animate-spin rounded-full h-10 w-10 border-2 border-[var(--color-border)] border-t-[var(--color-primary)]" aria-hidden="true" />
-                <p className="mt-5 text-caption text-[var(--text-muted)]">Loading articles...</p>
-              </div>
+              <LoadingState />
             ) : error ? (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
-                <p className="text-red-400 text-body">{error}</p>
+              <div className="bg-red-500/5 border border-red-500/20 rounded-3xl p-10 text-center">
+                <p className="text-red-400 font-bold tracking-tight">{error}</p>
               </div>
             ) : articles.length === 0 ? (
-              <div className="text-center py-20 bg-white/[0.04] rounded-2xl border border-[var(--color-border)]">
-                <p className="text-body text-[var(--text-muted)]">
-                  No articles available yet. Check back later!
-                </p>
-              </div>
+              <EmptyState />
             ) : (
-              <div className="grid gap-6">
+              <div className="grid gap-12">
                 {articles.map((article) => (
-                  <article
-                    key={article.id}
-                    className="bg-white/[0.04] backdrop-blur-sm p-7 md:p-8 rounded-2xl border border-[var(--color-border)] hover:bg-white/[0.06] hover:border-green-500/30 transition-all duration-300 group"
-                  >
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-                      <h2 className="text-heading-2 text-white group-hover:text-[var(--color-primary-hover)] transition-colors">
-                        {article.title}
-                      </h2>
-                      <span className="text-caption font-mono text-[var(--text-muted)] bg-white/[0.06] px-3 py-1.5 rounded-lg border border-[var(--color-border)] shrink-0">
-                        {new Date(article.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-body text-[var(--text-body)] leading-relaxed">
-                      {article.excerpt || article.content}
-                    </p>
-                    <div className="mt-6 flex items-center text-[var(--color-primary)] font-medium text-caption group-hover:translate-x-1 transition-transform cursor-pointer">
-                      Read more
-                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                    </div>
-                  </article>
+                  <ArticleCard key={article.id} article={article} />
                 ))}
               </div>
             )}
@@ -105,5 +83,50 @@ const Articles = () => {
     </div>
   );
 };
+
+const ArticleCard = ({ article }) => (
+  <article className="group relative flex flex-col items-start transition-all duration-300">
+    <div className="flex flex-col md:flex-row md:items-baseline justify-between w-full mb-4">
+      <h2 className="text-2xl font-black tracking-tight text-white group-hover:text-emerald-400 transition-colors duration-300">
+        {article.title}
+      </h2>
+      <time className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mt-2 md:mt-0 font-mono">
+        {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      </time>
+    </div>
+    
+    <p className="text-slate-400 leading-relaxed font-medium line-clamp-3 mb-6 max-w-3xl">
+      {article.excerpt || article.content}
+    </p>
+
+    <div className="flex items-center gap-2 text-emerald-500 font-black text-[11px] uppercase tracking-widest cursor-pointer">
+      <span className="relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-emerald-500 after:transition-all group-hover:after:w-full">
+        Full Analysis
+      </span>
+      <HiArrowNarrowRight className="group-hover:translate-x-2 transition-transform duration-300" size={16} />
+    </div>
+
+    {/* Subtle divider */}
+    <div className="w-full h-[1px] bg-white/[0.05] mt-12 transition-colors duration-500 group-hover:bg-emerald-500/20" />
+  </article>
+);
+
+const LoadingState = () => (
+  <div className="space-y-12">
+    {[1, 2, 3].map((n) => (
+      <div key={n} className="animate-pulse">
+        <div className="h-8 bg-white/5 rounded-lg w-2/3 mb-4" />
+        <div className="h-4 bg-white/5 rounded-lg w-full mb-2" />
+        <div className="h-4 bg-white/5 rounded-lg w-1/2" />
+      </div>
+    ))}
+  </div>
+);
+
+const EmptyState = () => (
+  <div className="text-center py-24 bg-white/[0.02] rounded-[32px] border border-white/[0.05]">
+    <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">The vault is empty</p>
+  </div>
+);
 
 export default Articles;

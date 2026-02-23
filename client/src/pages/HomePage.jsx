@@ -4,55 +4,69 @@ import Footer from '../components/Layout/Footer';
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-background)] text-white">
-      <div className="page-backdrop" aria-hidden="true" />
-      <div className="page-content flex flex-col min-h-screen">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-emerald-500/30">
+      {/* Subtle Grainy Overlay for texture */}
+      <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none z-50"></div>
+      
       <Navbar />
-      <main className="flex-grow">
+      
+      <main className="relative">
         <Hero />
 
         {/* Features Section */}
-        <section className="container-wide section-spacing-lg" aria-labelledby="features-heading">
-          <div className="text-center mb-14 md:mb-16 max-w-2xl mx-auto">
-            <h2 id="features-heading" className="text-heading-1 text-white mb-4">Why Loginly?</h2>
-            <p className="text-body-lg text-[var(--text-body)]">Everything you need for a secure authentication system</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            {/* Card 1 */}
-            <div className="group bg-white/[0.04] p-7 md:p-8 rounded-2xl border border-[var(--color-border)] hover:border-green-500/30 hover:bg-white/[0.07] transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-green-500/10 transition-all" aria-hidden="true" />
-              <h3 className="text-heading-2 text-white mb-3 group-hover:text-[var(--color-primary-hover)] transition-colors">Secure Authentication</h3>
-              <p className="text-caption text-[var(--text-body)] leading-relaxed">
-                Industry-standard security implemented with end-to-end encryption, ensuring your data remains protected using advanced JWT protocols.
-              </p>
+        <section className="py-24 px-6 relative z-10" aria-labelledby="features-heading">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+              <div className="max-w-xl">
+                <h2 id="features-heading" className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+                  Security by <span className="text-emerald-500 underline decoration-emerald-500/20 underline-offset-8">Design</span>
+                </h2>
+                <p className="text-slate-400 text-lg">
+                  We handle the complexities of authentication so you can focus on building your core product.
+                </p>
+              </div>
+              <div className="hidden md:block pb-2 text-emerald-500 font-mono text-sm tracking-tighter">
+                // Feature set v1.0.4
+              </div>
             </div>
 
-            {/* Card 2 */}
-            <div className="group bg-white/[0.04] p-7 md:p-8 rounded-2xl border border-[var(--color-border)] hover:border-green-500/30 hover:bg-white/[0.07] transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-green-500/10 transition-all" aria-hidden="true" />
-              <h3 className="text-heading-2 text-white mb-3 group-hover:text-[var(--color-primary-hover)] transition-colors">Intuitive Interface</h3>
-              <p className="text-caption text-[var(--text-body)] leading-relaxed">
-                Designed with a focus on user experience, offering a seamless and intuitive navigation flow that feels natural.
-              </p>
-            </div>
-
-            {/* Card 3 */}
-            <div className="group bg-white/[0.04] p-7 md:p-8 rounded-2xl border border-[var(--color-border)] hover:border-green-500/30 hover:bg-white/[0.07] transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-[50px] pointer-events-none group-hover:bg-green-500/10 transition-all" aria-hidden="true" />
-              <h3 className="text-heading-2 text-white mb-3 group-hover:text-[var(--color-primary-hover)] transition-colors">High Performance</h3>
-              <p className="text-caption text-[var(--text-body)] leading-relaxed">
-                Optimized for speed and efficiency, ensuring instant responses and a smooth, lag-free experience for all users.
-              </p>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Feature Cards with hover lift and glass effect */}
+              <FeatureCard 
+                title="Secure Authentication"
+                desc="Industry-standard security implemented with end-to-end encryption, ensuring your data remains protected using advanced JWT protocols."
+              />
+              <FeatureCard 
+                title="Intuitive Interface"
+                desc="Designed with a focus on user experience, offering a seamless and intuitive navigation flow that feels natural."
+              />
+              <FeatureCard 
+                title="High Performance"
+                desc="Optimized for speed and efficiency, ensuring instant responses and a smooth, lag-free experience for all users."
+              />
             </div>
           </div>
         </section>
-
       </main>
+
       <Footer />
-      </div>
     </div>
   );
 };
+
+// Internal Helper for cleaner code
+const FeatureCard = ({ title, desc }) => (
+  <div className="group relative p-8 rounded-3xl border border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent hover:from-white/[0.06] transition-all duration-500">
+    <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+      <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+    </div>
+    <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
+    <p className="text-slate-400 leading-relaxed text-sm">
+      {desc}
+    </p>
+    {/* Subtle hover border glow */}
+    <div className="absolute inset-0 rounded-3xl border border-emerald-500/0 group-hover:border-emerald-500/20 transition-colors duration-500" />
+  </div>
+);
 
 export default HomePage;
